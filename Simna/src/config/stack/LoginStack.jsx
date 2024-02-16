@@ -9,13 +9,7 @@ export default function LoginStack() {
         <Stack.Navigator
             initialRouteName="Login"
             screenOptions={{
-                headerStyle: {
-                    backgroundColor: "#9CCDDB", // Change the color here
-                },
-                headerTintColor: "#072D44",
-                headerTitleStyle: {
-                    fontWeight: "bold",
-                },
+                headerShown: false, // Hide the header
             }}
         >
             <Stack.Screen

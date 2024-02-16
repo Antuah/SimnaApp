@@ -5,9 +5,7 @@ import Logo from "../../../../../../assets/img/logo.png";
 
 import { TouchableOpacity } from "react-native";
 
-export default function Login(props) {
-  console.log("Login props:", props);
-  const { name, lastname, age } = props;
+export default function Login({navigation}) {
   return (
     <View style={styles.container}>
       <Image
@@ -18,8 +16,10 @@ export default function Login(props) {
       <TouchableOpacity
         style={styles.button}
         onPress={() => {
-          alert("Consultar Historigrama");
-        }}
+
+          navigation.navigate("Historigrama");
+        }
+      }
       >
         <Text style={styles.buttonText}>Consultar Historigrama</Text>
       </TouchableOpacity>
@@ -49,7 +49,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     justifyContent: "center",
     alignItems: "center",
-    marginVertical: 10,
+    marginVertical: 20,
   },
   buttonText: {
     color: "#072D44",
