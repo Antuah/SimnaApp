@@ -5,6 +5,7 @@ import LoginStack from "../stack/LoginStack";
 import Menu from "../../modules/auth/login/adapters/screens/Menu"; // Update the path accordingly
 import MenuStack from "../stack/MenuStack";
 import Historigrama from "../../modules/historigrama/adapters/screens/Historigrama";
+import Pozos from "../../modules/pozos/adapters/screens/Pozos"
 
 const Stack = createStackNavigator();
 
@@ -29,6 +30,11 @@ const App = () => {
                 <Stack.Screen
                     name="Historigrama"
                     component={Historigrama}
+                    options={{ headerShown: true,}}
+                />
+                <Stack.Screen
+                    name="Pozos"
+                    component={Pozos}
                     options={{ headerShown: true }}
                 />
             </Stack.Navigator>

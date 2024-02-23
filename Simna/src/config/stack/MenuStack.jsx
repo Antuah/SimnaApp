@@ -23,6 +23,11 @@ export default function MenuStack() {
         component={Menu}
         options={{ title: "Historigrama" }}
       />
+      <Stack.Screen
+        name="Menu"
+        component={Menu}
+        options={{ title: "Pozos" }}
+      />
     </Stack.Navigator>
   );
 }
