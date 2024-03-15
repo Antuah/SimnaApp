@@ -10,7 +10,7 @@ export default function MenuStack() {
       initialRouteName="Menu"
       screenOptions={{
         headerStyle: {
-          backgroundColor: "#9CCDDB", // Change the color here
+          backgroundColor: "#9CCDDB", 
         },
         headerTintColor: "#072D44",
         headerTitleStyle: {
