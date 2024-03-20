@@ -5,6 +5,10 @@ import { TouchableOpacity } from "react-native";
 import HistorigramaGrafica from "../HistorigramaGrafica";
 
 export default function Historigrama({ navigation }) {
+  const handlePress = () => {
+    alert("Consumo 1000 Litros");
+  };
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Registros: </Text>
@@ -25,7 +29,9 @@ export default function Historigrama({ navigation }) {
       </View>
       <View style={styles.line}></View>
       <View style={styles.historigrama}>
-        <HistorigramaGrafica />
+        <TouchableOpacity onPress={handlePress}>
+          <HistorigramaGrafica />
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -44,7 +50,6 @@ const styles = StyleSheet.create({
   },
   historigrama: {
     marginTop: 380,
-    
   },
   center: {
     fontSize: 14,
