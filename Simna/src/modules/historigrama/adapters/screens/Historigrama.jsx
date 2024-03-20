@@ -44,6 +44,7 @@ const styles = StyleSheet.create({
   },
   historigrama: {
     marginTop: 380,
+    
   },
   center: {
     fontSize: 14,

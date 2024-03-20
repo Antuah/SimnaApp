@@ -1,10 +1,16 @@
-import React from "react";
-import { View, Text, StyleSheet, Button, Alert } from "react-native";
-import { Image, Icon } from "@rneui/base"; // Import Icon for the winged circle
-
-import { TouchableOpacity } from "react-native";
+import React, { useState } from "react";
+import {
+  View,
+  Text,
+  StyleSheet,
+  Button,
+  Alert,
+  TouchableOpacity,
+} from "react-native";
+import { Image, Icon } from "@rneui/base";
 
 export default function Pozos({ navigation }) {
+  const [isChanged, setIsChanged] = useState(false); // State to track change
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Registros: </Text>
@@ -17,8 +23,8 @@ export default function Pozos({ navigation }) {
       <View style={styles.line}></View>
       <TouchableOpacity
         onPress={() => {
-          Alert.alert("¿Deseas abrir o cerrar este pozo?");
-          
+          Alert.alert("Se a cambiado el estado del pozo");
+          setIsChanged(!isChanged); // Toggle the state
         }}
       >
         <View style={styles.rowinfo}>
@@ -26,7 +32,7 @@ export default function Pozos({ navigation }) {
             <Icon
               name="circle"
               type="font-awesome-5"
-              color="#00C853"
+              color={isChanged ? "#FF0000" : "#00C853"}
               style={styles.activity}
             />
             <Icon name="water" type="font-awesome-5" color="#FFFFFF" />
