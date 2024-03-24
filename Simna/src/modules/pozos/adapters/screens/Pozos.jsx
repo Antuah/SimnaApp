@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { Image, Icon } from "@rneui/base";
+import mapa from "../../../../../assets/img/mapa.png";
 
 export default function Pozos({ navigation }) {
   const [isChanged, setIsChanged] = useState(false); // State to track change
@@ -24,7 +25,7 @@ export default function Pozos({ navigation }) {
       <TouchableOpacity
         onPress={() => {
           Alert.alert("Se a cambiado el estado del pozo");
-          setIsChanged(!isChanged); // Toggle the state
+          setIsChanged(!isChanged);
         }}
       >
         <View style={styles.rowinfo}>
@@ -32,8 +33,12 @@ export default function Pozos({ navigation }) {
             <Icon
               name="circle"
               type="font-awesome-5"
+              size={15}
               color={isChanged ? "#FF0000" : "#00C853"}
-              style={styles.activity}
+              backgroundColor={isChanged ? "#FF0000" : "#00C853"}
+              borderRadius={50}
+              marginTop={5}
+              marginRight={10}
             />
             <Icon name="water" type="font-awesome-5" color="#FFFFFF" />
           </View>
@@ -45,6 +50,8 @@ export default function Pozos({ navigation }) {
           </Text>
         </View>
       </TouchableOpacity>
+      <View style={styles.line2}></View>
+      <Image source={mapa} style={styles.mapa} />
     </View>
   );
 }
@@ -53,6 +60,13 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#072D44",
+  },
+  mapa: {
+    width: 380,
+    height: 380,
+    marginTop: 10,
+    marginLeft: 6,
+    marginBottom: 100,
   },
 
   row: {
@@ -97,14 +111,14 @@ const styles = StyleSheet.create({
     backgroundColor: "#5790AB",
     width: "100%",
   },
-  activity: {
-    width: 10,
-    height: 10,
-    marginTop: 7,
-    marginRight: 10,
-    backgroundColor: "#00C853",
+  line2: {
+    marginTop: 10,
+    height: 2,
+    backgroundColor: "#5790AB",
+    width: "100%",
+    marginTop: 250,
   },
   iconContainer: {
-    flexDirection: "row", // Arrange icons horizontally
+    flexDirection: "row",
   },
 });
