@@ -1,102 +1,116 @@
-import React, { useContext, useState, useEffect } from "react";
+import React, { useContext } from "react";
 import { useFormik } from "formik";
-import * as Yup from "yup";
-import { StyleSheet, View, Text, Image } from "react-native";
-import { Input, Button } from "@rneui/base";
+import {} from "react";
+import * as yup from "yup";
+import { View, Text, TouchableOpacity, ActivityIndicator } from "react-native";
 import AuthContext from "../../../../../config/context/auth.context";
 import AxiosClient from "../../../../../config/client/axios-client";
-import Logo from "../../../../../../assets/img/logo.png";
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Button, Checkbox, Label, Spinner, TextInput } from "flowbite-react";
 
 const Login = ({ navigation }) => {
-  const { signIn } = useContext(AuthContext);
-  const [error, setError] = useState("");
-
+  const { user, dispatch } = useContext(AuthContext);
   const formik = useFormik({
     initialValues: {
-      email: "",
+      username: "",
       password: "",
     },
-    validationSchema: Yup.object({
-      email: Yup.string()
-        .email("Correo electrónico no válido")
-        .required("Correo electrónico obligatorio"),
-      password: Yup.string()
-        .min(6, "La contraseña debe tener al menos 6 caracteres")
-        .required("Contraseña obligatoria"),
+    validationSchema: yup.object().shape({
+      username: yup.string().required("Campo obligatorio"),
+      password: yup.string().required("Campo obligatorio"),
     }),
-    onSubmit: async (values) => {
+    onSubmit: async (values, { setSubmitting }) => {
+      console.log(values);
       try {
-        const response = await AxiosClient.post("/auth/login", values);
-        if (response.data) {
-          signIn(response.data); // Guarda el usuario en el contexto
-          await AsyncStorage.setItem(
-            "userToken",
-            JSON.stringify(response.data)
-          ); // Almacena el token de usuario
-          navigation.navigate("Home");
-        } else {
-          setError("Usuario o contraseña incorrectos");
+        const response = await AxiosClient({
+          url: "/auth/signin",
+          method: "POST",
+          data: values,
+        });
+        console.log(response);
+        if (response.status === "OK") {
+          dispatch({ type: "SIGN_IN", payload: response.data });
+          navigation.navigate("Historigrama");
         }
-      } catch (error) {
-        setError("Usuario o contraseña incorrectos");
-        error.response && console.log(error.response.data);
+      } finally {
+        setSubmitting(false);
       }
     },
   });
-
-  const testAxiosConnection = async () => {
-    try {
-      const response = await AxiosClient.get("/test");
-      console.log("Respuesta del backend:", response.data);
-    } catch (error) {
-      console.error("Error al conectar con el backend:", error);
-    }
-  };
-
-  useEffect(() => {
-    testAxiosConnection(); // Llama a la función de prueba al cargar el componente
-  }, []);
-
   return (
-    <View style={styles.container}>
-      <View style={styles.logoContainer}>
-        <Image source={Logo} style={styles.logo} />
-      </View>
-      <Input
-        placeholder="Correo"
-        value={formik.values.email}
-        onChangeText={formik.handleChange("email")}
-        onBlur={formik.handleBlur("email")}
-        style={styles.input}
-        name="email"
-      />
-      {formik.touched.email && formik.errors.email && (
-        <Text style={styles.error}>{formik.errors.email}</Text>
-      )}
-      <Input
-        placeholder="Contraseña"
-        value={formik.values.password}
-        onChangeText={formik.handleChange("password")}
-        onBlur={formik.handleBlur("password")}
-        secureTextEntry
-        style={styles.input}
-        name="password"
-      />
-      {formik.touched.password && formik.errors.password && (
-        <Text style={styles.error}>{formik.errors.password}</Text>
-      )}
+    <form
+      className="flex flex-col items-center gap-4 max-w-md mx-auto"
+      onSubmit={formik.handleSubmit}
+      noValidate
+    >
+      <div className="w-full">
+        <div className="mb-2">
+          <Label
+            htmlFor="username"
+            value="Your username"
+            style={{ color: "black" }}
+          />
+        </div>
+        <TextInput
+          type="text"
+          id="username"
+          name="username"
+          value={formik.values.username}
+          onChange={formik.handleChange}
+          onBlur={formik.handleBlur}
+          helperText={
+            formik.errors.username && formik.touched.username ? (
+              <span className="text-red-600">{formik.errors.username}</span>
+            ) : null
+          }
+          placeholder="srloki"
+          required
+        />
+      </div>
+      <div className="w-full">
+        <div className="mb-2">
+          <Label
+            htmlFor="password1"
+            value="Your password"
+            style={{ color: "black" }}
+          />
+        </div>
+        <TextInput
+          id="password1"
+          type="password"
+          name="password"
+          value={formik.values.password}
+          onChange={formik.handleChange}
+          onBlur={formik.handleBlur}
+          helperText={
+            formik.errors.password && formik.touched.password ? (
+              <span className="text-red-600">{formik.errors.password}</span>
+            ) : null
+          }
+          required
+        />
+      </div>
+      <div className="flex items-center gap-2">
+        <Label htmlFor="remember" style={{ color: "black" }}>
+          Remember me
+        </Label>
+      </div>
       <Button
-        title="Iniciar Sesión"
-        style={styles.button}
-        onPress={formik.handleSubmit}
-      />
-      {error ? <Text style={styles.error}>{error}</Text> : null}
-    </View>
+        type="submit"
+        color="light"
+        className="w-full"
+        disabled={formik.isSubmitting || !formik.isValid}
+      >
+        {formik.isSubmitting ? (
+          <Spinner />
+        ) : (
+          <span className="text-base font-bold">Sign in</span>
+        )}
+      </Button>
+    </form>
   );
 };
 
-const styles = StyleSheet.create({
+const styles = {
   container: {
     flex: 1,
     justifyContent: "center",
@@ -105,10 +119,6 @@ const styles = StyleSheet.create({
   },
   logoContainer: {
     marginBottom: 30,
-  },
-  logo: {
-    width: 150,
-    height: 150,
   },
   input: {
     width: "80%",
@@ -120,11 +130,20 @@ const styles = StyleSheet.create({
   button: {
     marginTop: 20,
     backgroundColor: "#007bff",
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 10,
+  },
+  buttonText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "bold",
+    textAlign: "center",
   },
   error: {
     color: "red",
     marginTop: 10,
   },
-});
+};
 
 export default Login;
