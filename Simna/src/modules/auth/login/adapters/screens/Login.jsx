@@ -1,87 +1,149 @@
-import { useState } from "react";
-import { StyleSheet, View, Text, KeyboardAvoidingView } from "react-native";
-import { Input, Button, Icon, Image } from "@rneui/base";
-import Logo from "../../../../../../assets/img/logo.png";
-import { isEmpty } from "lodash";
+import React, { useContext } from "react";
+import { useFormik } from "formik";
+import {} from "react";
+import * as yup from "yup";
+import { View, Text, TouchableOpacity, ActivityIndicator } from "react-native";
+import AuthContext from "../../../../../config/context/auth.context";
+import AxiosClient from "../../../../../config/client/axios-client";
+import { Button, Checkbox, Label, Spinner, TextInput } from "flowbite-react";
 
-export default function Login({ navigation }) {
-  const [email, setUser] = useState("");
-  const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(true);
-  const [error, setError] = useState("");
-
-  const handleLogin = () => {
-    if (isEmpty(email) || isEmpty(password)) {
-      setError("Todos los campos son obligatorios");
-    } else {
-      setError("");
-      navigation.navigate("Menu");
-    }
-  };
-
-  return (
-    <KeyboardAvoidingView style={styles.container} behavior="padding">
-      <View style={styles.logoContainer}>
-        <Image source={Logo} style={styles.logo} />
-      </View>
-      <Input
-        placeholder="Correo"
-        value={email}
-        onChangeText={setUser}
-        style={styles.input}
-        leftIcon={<Icon name="email" color={"white"} />}
-        inputStyle={styles.inputText}
-      />
-      <Input
-        placeholder="Contraseña"
-        value={password}
-        onChangeText={setPassword}
-        style={styles.input}
-        leftIcon={<Icon name="lock" color={"white"} />}
-        rightIcon={
-          <Icon
-            color={"white"}
-            name={showPassword ? "visibility" : "visibility-off"}
-            onPress={() => setShowPassword(!showPassword)}
-          />
+const Login = ({ navigation }) => {
+  const { user, dispatch } = useContext(AuthContext);
+  const formik = useFormik({
+    initialValues: {
+      username: "",
+      password: "",
+    },
+    validationSchema: yup.object().shape({
+      username: yup.string().required("Campo obligatorio"),
+      password: yup.string().required("Campo obligatorio"),
+    }),
+    onSubmit: async (values, { setSubmitting }) => {
+      console.log(values);
+      try {
+        const response = await AxiosClient({
+          url: "/auth/signin",
+          method: "POST",
+          data: values,
+        });
+        console.log(response);
+        if (response.status === "OK") {
+          dispatch({ type: "SIGN_IN", payload: response.data });
+          navigation.navigate("Historigrama");
         }
-        secureTextEntry={showPassword}
-        inputStyle={styles.inputText}
-      />
-      <Button title="Iniciar Sesión" style={styles.button} onPress={handleLogin} />
-      <Text style={styles.error}>{error}</Text>
-    </KeyboardAvoidingView>
+      } finally {
+        setSubmitting(false);
+      }
+    },
+  });
+  return (
+    <form
+      className="flex flex-col items-center gap-4 max-w-md mx-auto"
+      onSubmit={formik.handleSubmit}
+      noValidate
+    >
+      <div className="w-full">
+        <div className="mb-2">
+          <Label
+            htmlFor="username"
+            value="Your username"
+            style={{ color: "black" }}
+          />
+        </div>
+        <TextInput
+          type="text"
+          id="username"
+          name="username"
+          value={formik.values.username}
+          onChange={formik.handleChange}
+          onBlur={formik.handleBlur}
+          helperText={
+            formik.errors.username && formik.touched.username ? (
+              <span className="text-red-600">{formik.errors.username}</span>
+            ) : null
+          }
+          placeholder="srloki"
+          required
+        />
+      </div>
+      <div className="w-full">
+        <div className="mb-2">
+          <Label
+            htmlFor="password1"
+            value="Your password"
+            style={{ color: "black" }}
+          />
+        </div>
+        <TextInput
+          id="password1"
+          type="password"
+          name="password"
+          value={formik.values.password}
+          onChange={formik.handleChange}
+          onBlur={formik.handleBlur}
+          helperText={
+            formik.errors.password && formik.touched.password ? (
+              <span className="text-red-600">{formik.errors.password}</span>
+            ) : null
+          }
+          required
+        />
+      </div>
+      <div className="flex items-center gap-2">
+        <Label htmlFor="remember" style={{ color: "black" }}>
+          Remember me
+        </Label>
+      </div>
+      <Button
+        type="submit"
+        color="light"
+        className="w-full"
+        disabled={formik.isSubmitting || !formik.isValid}
+      >
+        {formik.isSubmitting ? (
+          <Spinner />
+        ) : (
+          <span className="text-base font-bold">Sign in</span>
+        )}
+      </Button>
+    </form>
   );
-}
+};
 
-const styles = StyleSheet.create({
+const styles = {
   container: {
     flex: 1,
-    backgroundColor: "#072D44",
-    alignItems: "center",
     justifyContent: "center",
-  },
-  input: {
-    width: 300,
-    marginVertical: 10,
-  },
-  inputText: {
-    color: "gray",
-  },
-  button: {
-    width: 200,
-    height: 50,
-    marginVertical: 10,
-  },
-  logo: {
-    width: 220,
-    height: 220,
-    resizeMode: "contain",
+    alignItems: "center",
+    backgroundColor: "#fff",
   },
   logoContainer: {
-    marginBottom: 20,
+    marginBottom: 30,
+  },
+  input: {
+    width: "80%",
+    marginVertical: 10,
+    backgroundColor: "#ccc",
+    borderRadius: 10,
+    paddingHorizontal: 15,
+  },
+  button: {
+    marginTop: 20,
+    backgroundColor: "#007bff",
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 10,
+  },
+  buttonText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "bold",
+    textAlign: "center",
   },
   error: {
     color: "red",
+    marginTop: 10,
   },
-});
+};
+
+export default Login;
