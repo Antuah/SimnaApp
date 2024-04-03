@@ -1,11 +1,22 @@
-import {} from "react";
+import React from "react";
 import { StyleSheet, View, Text, Button } from "react-native";
 import { Image } from "@rneui/base";
 import Logo from "../../../../../../assets/img/logo.png";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import { TouchableOpacity } from "react-native";
 
-export default function Login({ navigation }) {
+export default function Menu({ navigation }) {
+  const handleLogout = async () => {
+    try {
+      await AsyncStorage.removeItem("token");
+
+      navigation.navigate("Login");
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   return (
     <View style={styles.container}>
       <Image
@@ -28,6 +39,9 @@ export default function Login({ navigation }) {
         }}
       >
         <Text style={styles.buttonText}>Consultar Pozos</Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.button} onPress={handleLogout}>
+        <Text style={styles.buttonText}>Cerrar Sesión</Text>
       </TouchableOpacity>
     </View>
   );
