@@ -1,165 +1,54 @@
-// Web:
-/*
-import React, { useContext } from "react";
-import { useFormik } from "formik";
-import {} from "react";
-import * as yup from "yup";
-import { View, Text, TouchableOpacity, ActivityIndicator } from "react-native";
-import AuthContext from "../../../../../config/context/auth.context";
-import AxiosClient from "../../../../../config/client/axios-client";
-import { Button, Checkbox, Label, Spinner, TextInput } from "flowbite-react";
-import { Image } from "@rneui/base";
-import Logo from "../../../../../../assets/img/logo.png";
-*/
-
-// Web:
-/*
-const Login = ({ navigation }) => {
-  const { user, dispatch } = useContext(AuthContext);
-  const formik = useFormik({
-    initialValues: {
-      username: "",
-      password: "",
-    },
-    validationSchema: yup.object().shape({
-      username: yup.string().required("Campo obligatorio"),
-      password: yup.string().required("Campo obligatorio"),
-    }),
-    onSubmit: async (values, { setSubmitting }) => {
-      console.log(values);
-      try {
-        const response = await AxiosClient({
-          url: "/auth/signin",
-          method: "POST",
-          data: values,
-        });
-        console.log(response);
-        if (response.status === "OK") {
-          dispatch({ type: "SIGN_IN", payload: response.data });
-          navigation.navigate("Historigrama");
-        }
-      } finally {
-        setSubmitting(false);
-      }
-    },
-  });
-  return (
-    <form
-      className="flex flex-col items-center gap-4 max-w-md mx-auto"
-      onSubmit={formik.handleSubmit}
-      noValidate
-    >
-      <div className="w-full">
-        <div className="mb-2">
-          <Label
-            htmlFor="username"
-            value="Your username"
-            style={{ color: "black" }}
-          />
-        </div>
-        <TextInput
-          type="text"
-          id="username"
-          name="username"
-          value={formik.values.username}
-          onChange={formik.handleChange}
-          onBlur={formik.handleBlur}
-          helperText={
-            formik.errors.username && formik.touched.username ? (
-              <span className="text-red-600">{formik.errors.username}</span>
-            ) : null
-          }
-          placeholder="srloki"
-          required
-        />
-      </div>
-      <div className="w-full">
-        <div className="mb-2">
-          <Label
-            htmlFor="password1"
-            value="Your password"
-            style={{ color: "black" }}
-          />
-        </div>
-        <TextInput
-          id="password1"
-          type="password"
-          name="password"
-          value={formik.values.password}
-          onChange={formik.handleChange}
-          onBlur={formik.handleBlur}
-          helperText={
-            formik.errors.password && formik.touched.password ? (
-              <span className="text-red-600">{formik.errors.password}</span>
-            ) : null
-          }
-          required
-        />
-      </div>
-      <div className="flex items-center gap-2">
-        <Label htmlFor="remember" style={{ color: "black" }}>
-          Remember me
-        </Label>
-      </div>
-      <Button
-        type="submit"
-        color="light"
-        className="w-full"
-        disabled={formik.isSubmitting || !formik.isValid}
-      >
-        {formik.isSubmitting ? (
-          <Spinner />
-        ) : (
-          <span className="text-base font-bold">Sign in</span>
-        )}
-      </Button>
-    </form>
-  );
-};
-*/
 // Mobile:
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { useFormik } from "formik";
 import {} from "react";
 import * as yup from "yup";
 import { View, Text, TouchableOpacity, ActivityIndicator } from "react-native";
-import AuthContext from "../../../../../config/context/auth.context";
-import AxiosClient from "../../../../../config/client/axios-client";
+import axios from "axios";
 import { TextInput, Image } from "react-native";
 import Logo from "../../../../../../assets/img/logo.png";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { API_URL } from "@env";
+import { useNavigation } from "@react-navigation/native";
 
 // Mobile:
-const Login = ({ navigation }) => {
-  const { dispatch } = useContext(AuthContext);
-  const formik = useFormik({
-    initialValues: {
-      username: "",
-      password: "",
-    },
-    validationSchema: yup.object().shape({
-      username: yup.string().required("Campo obligatorio"),
-      password: yup.string().required("Campo obligatorio"),
-    }),
-    onSubmit: async (values, { setSubmitting }) => {
-      console.log(values);
-      try {
-        const response = await AxiosClient({
-          url: "/auth/signin",
-          method: "POST",
-          data: values,
-        });
-        console.log(response);
-        if (response.status === "OK") {
-          dispatch({ type: "SIGN_IN", payload: response.data });
-          await AsyncStorage.setItem("user", JSON.stringify(response.data));
-          navigation.navigate("Historigrama");
-        }
-      } finally {
-        setSubmitting(false);
-      }
-    },
-  });
+const Login = () => {
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const navigation = useNavigation();
+
+  const handleUsernameChange = (text) => {
+    setUsername(text);
+  };
+
+  const handlePasswordChange = (text) => {
+    setPassword(text);
+  };
+
+  const handleForgotPassword = () => {
+    navigation.navigate("ForgotPassword");
+  };
+
+  const handleLogin = async () => {
+    try {
+      console.log("Enviando solicitud de inicio de sesión", username, password);
+      const response = await axios.post(`${API_URL}/auth/signin`, {
+        username: username,
+        password: password,
+      });
+      const usuarioInfo = {
+        username: response.data.username,
+        password: response.data.password,
+        token: response.data.token,
+      };
+      console.log("Respuesta de inicio de sesión", response.data);
+      await AsyncStorage.setItem("usuarioInfo", JSON.stringify(usuarioInfo));
+      navigation.navigate("Menu");
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.logoContainer}>
@@ -168,31 +57,18 @@ const Login = ({ navigation }) => {
       <TextInput
         style={styles.input}
         placeholder="Username"
-        value={formik.values.username}
-        onChangeText={formik.handleChange("username")}
+        value={username}
+        onChangeText={handleUsernameChange}
       />
-      {formik.errors.username && formik.touched.username ? (
-        <Text style={styles.error}>{formik.errors.username}</Text>
-      ) : null}
       <TextInput
         style={styles.input}
         placeholder="Password"
-        value={formik.values.password}
-        onChangeText={formik.handleChange("password")}
+        value={password}
+        onChangeText={handlePasswordChange}
+        secureTextEntry
       />
-      {formik.errors.password && formik.touched.password ? (
-        <Text style={styles.error}>{formik.errors.password}</Text>
-      ) : null}
-      <TouchableOpacity
-        style={styles.button}
-        onPress={formik.handleSubmit}
-        disabled={formik.isSubmitting || !formik.isValid}
-      >
-        {formik.isSubmitting ? (
-          <ActivityIndicator color="#fff" />
-        ) : (
-          <Text style={styles.buttonText}>Sign in</Text>
-        )}
+      <TouchableOpacity style={styles.button} onPress={handleLogin}>
+        <Text style={styles.buttonText}>Login</Text>
       </TouchableOpacity>
     </View>
   );
