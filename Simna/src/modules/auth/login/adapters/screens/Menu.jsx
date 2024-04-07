@@ -40,8 +40,8 @@ export default function Menu({ navigation }) {
       >
         <Text style={styles.buttonText}>Consultar Pozos</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.button} onPress={handleLogout}>
-        <Text style={styles.buttonText}>Cerrar Sesión</Text>
+      <TouchableOpacity style={styles.btnOut} onPress={handleLogout}>
+        <Text style={styles.textOut}>Cerrar Sesión</Text>
       </TouchableOpacity>
     </View>
   );
@@ -75,5 +75,18 @@ const styles = StyleSheet.create({
   },
   logoContainer: {
     marginBottom: 16,
+  },
+  textOut: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+  btnOut: {
+    width: 180,
+    height: 50,
+    borderRadius: 5,
+    justifyContent: "center",
+    alignItems: "center",
+    marginVertical: 20,
   },
 });
