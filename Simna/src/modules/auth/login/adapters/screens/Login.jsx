@@ -31,18 +31,18 @@ const Login = () => {
 
   const handleLogin = async () => {
     try {
-      console.log("Enviando solicitud de inicio de sesión", username, password);
+      console.log("Enviando solicitud de inicio de sesión:", username, password);
       const response = await axios.post(`${API_URL}/auth/signin`, {
         username: username,
         password: password,
       });
+      console.log("Respuesta del servidor:", response.data.data);
       const usuarioInfo = {
-        username: response.data.username,
-        password: response.data.password,
-        token: response.data.token,
+        token: response.data.data.token,
+        username: response.data.data.user.username,
       };
-      console.log("Respuesta de inicio de sesión", response.data);
       await AsyncStorage.setItem("usuarioInfo", JSON.stringify(usuarioInfo));
+      console.log("Usuario guardado en AsyncStorage", usuarioInfo);
       navigation.navigate("Menu");
     } catch (error) {
       console.error(error);
@@ -74,45 +74,6 @@ const Login = () => {
   );
 };
 
-// Web:
-/*
-const styles = {
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#fff",
-  },
-  logoContainer: {
-    marginBottom: 30,
-  },
-  input: {
-    width: "80%",
-    marginVertical: 10,
-    backgroundColor: "#ccc",
-    borderRadius: 10,
-    paddingHorizontal: 15,
-  },
-  button: {
-    marginTop: 20,
-    backgroundColor: "#007bff",
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 10,
-  },
-  buttonText: {
-    color: "#fff",
-    fontSize: 16,
-    fontWeight: "bold",
-    textAlign: "center",
-  },
-  error: {
-    color: "red",
-    marginTop: 10,
-  },
-};
-*/
-
 // Mobile:
 const styles = {
   container: {
@@ -131,13 +92,14 @@ const styles = {
   },
   input: {
     width: "80%",
+    height: 38,
     marginVertical: 10,
     backgroundColor: "#ccc",
-    borderRadius: 10,
+    borderRadius: 5,
     paddingHorizontal: 15,
   },
   button: {
-    marginTop: 20,
+    marginTop: 30,
     backgroundColor: "#007bff",
     paddingVertical: 10,
     paddingHorizontal: 20,
