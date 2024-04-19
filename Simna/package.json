@@ -26,6 +26,7 @@
     "react-dom": "18.2.0",
     "react-native": "0.73.2",
     "react-native-dotenv": "^3.4.11",
+    "react-native-maps": "^1.14.0",
     "react-native-svg": "^15.0.0",
     "react-native-web": "~0.19.6",
     "react-router-dom": "^6.22.3",

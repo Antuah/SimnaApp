@@ -12,10 +12,18 @@ import mapa from "../../../../../assets/img/mapa.png";
 import { API_URL } from "@env";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import MapView, { Marker } from "react-native-maps";
+
+const INITIAL_REGION = {
+  latitude: 18.850500661593863,
+  longitude: -99.20063415374794,
+  latitudeDelta: 0.003,
+  longitudeDelta: 0.003,
+};
 
 export default function Pozos({ navigation }) {
   const [pozos, setPozos] = useState([]); // Array de pozos
-
+  const [region, setRegion] = useState(INITIAL_REGION);
   //Obtenemos el token del usuario
   const getToken = async () => {
     try {
@@ -29,6 +37,24 @@ export default function Pozos({ navigation }) {
     }
   };
 
+  // Función para generar coordenadas aleatorias cercanas a una ubicación dada
+  const generarCoordenadasAleatorias = (pozo) => {
+    if (pozo.coordenadas) {
+      return pozo.coordenadas;
+    } else {
+      const offset = 0.001 * Math.random() * (Math.random() < 0.5 ? -1 : 1);
+      const nuevasCoordenadas = {
+        latitude: INITIAL_REGION.latitude + offset,
+        longitude: INITIAL_REGION.longitude + offset,
+      };
+      // Asignar las nuevas coordenadas al pozo y actualizar el estado
+      pozo.coordenadas = nuevasCoordenadas;
+      setPozos((prevPozos) =>
+        prevPozos.map((prevPozo) => (prevPozo.id === pozo.id ? pozo : prevPozo))
+      );
+      return nuevasCoordenadas;
+    }
+  };
   //Obtenemos la informacion de los pozos
   const getPozos = async () => {
     console.log("Obteniendo pozos");
@@ -141,7 +167,23 @@ export default function Pozos({ navigation }) {
         </TouchableOpacity>
       ))}
       <View style={styles.line2}></View>
-      <Image source={mapa} style={styles.mapa} />
+      <MapView
+        style={styles.mapa}
+        initialRegion={region}
+        showsUserLocation={true}
+        showsMyLocationButton={true}
+        showsCompass={true}
+        showsScale={true}
+      >
+        {pozos.map((pozo) => (
+          <Marker
+            key={pozo.id}
+            coordinate={generarCoordenadasAleatorias(pozo)}
+            title={pozo.nombre}
+            description={pozo.ubicacionPozo}
+          />
+        ))}
+      </MapView>
     </View>
   );
 }
