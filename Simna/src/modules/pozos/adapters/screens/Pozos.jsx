@@ -72,6 +72,7 @@ export default function Pozos({ navigation }) {
     }
   };
 
+
   // Corrige los parámetros de la función cambiarEstado:
   const cambiarEstado = async (id, status) => {
     try {
