@@ -1,8 +1,6 @@
-¡Perfecto! Con tu descripción, aquí tienes un README adaptado para SimnaApp, un sistema medidor de agua mediante IoT con sensor ultrasónico:
-
 ---
 
-# SimnaApp
+# SimnaApp 💧
 
 SimnaApp es un sistema de medición de agua basado en IoT que utiliza un sensor ultrasónico para monitorear el nivel de agua de manera precisa y en tiempo real.
 
