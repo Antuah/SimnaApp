@@ -43,5 +43,3 @@ SimnaApp permite la medición remota del nivel de agua en tanques, cisternas u o
 
 
 ---
-
-¿Quieres agregar detalles técnicos sobre el hardware soportado o la arquitectura IoT empleada? ¿O prefieres que revise el código para añadir ejemplos de uso más específicos?
